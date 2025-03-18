@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>친절한 조형관 탐색기</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MS+Sans+Serif&display=swap');
+        
+        body {
+            font-family: 'MS Sans Serif', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow: hidden;
+        }
+        .desktop {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .icon {
+            display: inline-block;
+            text-align: center;
+            width: 80px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .window {
+            position: absolute;
+            width: 500px;
+            height: 300px;
+            background: #FFFFFF;
+            border: 3px solid black;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+            display: none;
+            transition: transform 0.1s ease-in-out;
+        }
+        .title-bar {
+            background: linear-gradient(to right, navy, blue);
+            color: white;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        .content {
+            padding: 10px;
+            font-family: 'MS Sans Serif', sans-serif;
+            color: black;
+            background: white;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .deleted-text {
+            color: red;
+            text-decoration: line-through;
+        }
+        .hidden-comment {
+            font-size: 10px;
+            color: gray;
+            display: none;
+        }
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #C0C0C0;
+            border-top: 2px solid #808080;
+            box-shadow: inset 0px 2px #FFFFFF, inset 0px -2px #808080;
+            padding: 5px;
+            text-align: left;
+            border-top: 2px solid gray;
+            display: flex;
+            align-items: center;
+        }
+        .start-btn {
+            background: silver;
+            color: black;
+            padding: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px outset gray;
+            margin-left: 5px;
+        }
+        .start-menu {
+            display: none;
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            background: white;
+            border: 2px solid black;
+            padding: 10px;
+        }
+        
+        
+            position: relative; /* 기준점을 설정 */
+            height: 100vh; /* 화면 전체 높이 사용 */
+            margin: 0; /* 기본 마진 제거 */
+
+        #timer {
+            position: fixed; /* 화면에 고정 */
+            bottom: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: red;
+        }
+
+        #password-container {
+            position: fixed; /* 화면에 고정 */
+            bottom: 50px; /* 타이머 위에 배치 */
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+    <script>
+        let timer;
+        let timeLeft = 180;  // 3 minutes
+
+        function startTimer() {
+            timer = setInterval(function() {
+                timeLeft--;
+                document.getElementById('timer').textContent = `남은 시간: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    alert("시간 초과! 게임이 종료되었습니다.");
+                    exitGame();
+                }
+            }, 1000);
+        }
+
+        function openPreview(fileId) {
+            let file = document.getElementById(fileId);
+            file.style.display = "block";
+        }
+
+        function closeFile(fileId) {
+            document.getElementById(fileId).style.display = "none";
+        }
+
+        function startMenuToggle() {
+            let menu = document.querySelector(".start-menu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        function revealComment(id) {
+            document.getElementById(id).style.display = "block";
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+
+        
+        function checkPassword() {
+    const password = document.getElementById('password-input').value;
+    if (password === '212') {  // 예시 암호
+        alert("암호가 맞습니다! 당신은 친절한 조형관에서 탈출합니다!");
+        window.location.href = "choose.html";  // 원하는 사이트 URL로 변경
+    } else {
+        alert("암호가 틀렸습니다. 다시 시도해 주세요.");
+    }
+}
+
+    </script>
+</head>
+<body onload="startTimer()">
+    <div class="desktop">
+        <div class="icon" onclick="openPreview('file1')">
+            <img src="txtfile.png" width="50" height="56" alt="파일 아이콘">
+            <span>수색 매뉴얼.txt</span>
+        </div>
+        <div class="icon" onclick="openPreview('file2')">
+            <img src="txtfile.png" width="50" height="56" alt="파일 아이콘">
+            <span>F씨 실종 기록.txt</span>
+        </div>
+        <div class="icon" onclick="openPreview('file3')">
+            <img src="txtfile.png" width="50" height="56" alt="파일 아이콘">
+            <span>경비원 보고서.txt</span>
+        </div>
+        
+        <div class="taskbar">
+            <button class="start-btn" onclick="startMenuToggle()">시작</button>
+            <div class="start-menu">
+                <button onclick="restartGame()">🔄 다시 시작</button>
+                <button onclick="exitGame()">❌ 종료</button>
+            </div>
+        </div>
+
+        <div id="file1" class="window">
+            <div class="title-bar">
+                <span>📄 수색 매뉴얼 - 메모장</span>
+                <button onclick="closeFile('file1')">X</button>
+            </div>
+            <div class="content">
+                탐색 매뉴얼 내용이 여기에 들어갑니다. 
+                <span class="deleted-text">이 문장은 삭제되었습니다.</span> 
+                <button onclick="revealComment('comment1')">(이전 기록 보기)</button>
+                <div id="comment1" class="hidden-comment">[기록 없음]</div>
+                <br><br>
+                <b>문제:</b> B1의 계단은 몇개일까??
+                <ol>
+                    <li>11개</li>
+                    <li>13개</li>
+                    <li>12개개</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="file2" class="window">
+            <div class="title-bar">
+                <span>📄 F씨 실종 기록 - 메모장</span>
+                <button onclick="closeFile('file2')">X</button>
+            </div>
+            <div class="content">
+                실종 기록 내용이 여기에 들어갑니다. ██ [ERROR] ██
+                <div class="hidden-comment">너도 여기 있었구나.</div>
+                <br><br>
+                <b>문제:</b> 당신은 어디에 있는가?
+                <ol>
+                    <li>414호</li>
+                    <li>520호호</li>
+                    <li>조형관 내부 어딘가가</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="file3" class="window">
+            <div class="title-bar">
+                <span>📄 경비원 보고서 - 메모장</span>
+                <button onclick="closeFile('file3')">X</button>
+            </div>
+            <div class="content">
+                경비원 보고서 내용이 여기에 들어갑니다. [기록 손실됨]
+                <br><br>
+                <b>문제:</b> 누가 메뉴얼을 유출 한 걸까?
+                <ol>
+                    <li>F</li>
+                    <li>D</li>
+                    <li>처음부터 그런건 없었다</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="password-container">
+            
+            <label for="password-input">암호 입력:</label>
+            <input type="text" id="password-input" placeholder="암호를 입력하세요">
+            <button onclick="checkPassword()">확인</button>
+        </div>
+
+        <div id="timer">남은 시간: 180s</div>
+    </div>
+</body>
+</html>
